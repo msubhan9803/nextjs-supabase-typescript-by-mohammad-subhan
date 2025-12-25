@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import type { Client, CreateClientInput, UpdateClientInput } from '@/backend/entities/client';
 import { TABLES } from '@/lib/constants';
+import { ClientRow } from '@/types/schema';
 
 export class ClientRepository {
   async findAllByUserId(userId: string): Promise<Client[]> {
@@ -47,7 +48,7 @@ export class ClientRepository {
         email: input.email,
         phone: input.phone ?? null,
         notes: input.notes ?? null,
-      } as never)
+      })
       .select()
       .single();
 
@@ -110,16 +111,7 @@ export class ClientRepository {
     return (data ?? []).map(this.mapRowToEntity);
   }
 
-  private mapRowToEntity(row: {
-    id: string;
-    user_id: string;
-    name: string;
-    email: string;
-    phone: string | null;
-    notes: string | null;
-    created_at: string;
-    updated_at: string;
-  }): Client {
+  private mapRowToEntity(row: ClientRow): Client {
     return {
       id: row.id,
       user_id: row.user_id,
@@ -127,8 +119,8 @@ export class ClientRepository {
       email: row.email,
       phone: row.phone,
       notes: row.notes,
-      created_at: new Date(row.created_at),
-      updated_at: new Date(row.updated_at),
+      created_at: new Date(row.created_at ?? ''),
+      updated_at: new Date(row.updated_at ?? ''),
     };
   }
 }

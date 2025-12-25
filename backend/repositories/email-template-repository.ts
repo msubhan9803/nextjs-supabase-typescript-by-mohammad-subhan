@@ -5,6 +5,7 @@ import type {
   UpdateEmailTemplateInput,
 } from '@/backend/entities/email-template';
 import { TABLES } from '@/lib/constants';
+import { EmailTemplateRow } from '@/types/schema';
 
 export class EmailTemplateRepository {
   async findAllByUserId(userId: string): Promise<EmailTemplate[]> {
@@ -105,23 +106,15 @@ export class EmailTemplateRepository {
     }
   }
 
-  private mapRowToEntity(row: {
-    id: string;
-    user_id: string;
-    name: string;
-    subject: string;
-    body: string;
-    created_at: string;
-    updated_at: string;
-  }): EmailTemplate {
+  private mapRowToEntity(row: EmailTemplateRow): EmailTemplate {
     return {
       id: row.id,
       user_id: row.user_id,
       name: row.name,
       subject: row.subject,
       body: row.body,
-      created_at: new Date(row.created_at),
-      updated_at: new Date(row.updated_at),
+      created_at: new Date(row.created_at ?? ''),
+      updated_at: new Date(row.updated_at ?? ''),
     };
   }
 }

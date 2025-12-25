@@ -5,6 +5,7 @@ import type {
   UpdateGoogleTokenInput,
 } from '@/backend/entities/google-token';
 import { TABLES } from '@/lib/constants';
+import { GoogleTokenRow } from '@/types/schema';
 
 export class GoogleTokenRepository {
   async findByUserId(userId: string): Promise<GoogleToken | null> {
@@ -98,23 +99,15 @@ export class GoogleTokenRepository {
     return this.mapRowToEntity(data);
   }
 
-  private mapRowToEntity(row: {
-    id: string;
-    user_id: string;
-    access_token: string;
-    refresh_token: string;
-    expires_at: string;
-    created_at: string;
-    updated_at: string;
-  }): GoogleToken {
+  private mapRowToEntity(row: GoogleTokenRow): GoogleToken {
     return {
       id: row.id,
       user_id: row.user_id,
       access_token: row.access_token,
       refresh_token: row.refresh_token,
-      expires_at: new Date(row.expires_at),
-      created_at: new Date(row.created_at),
-      updated_at: new Date(row.updated_at),
+      expires_at: new Date(row.expires_at ?? ''),
+      created_at: new Date(row.created_at ?? ''),
+      updated_at: new Date(row.updated_at ?? ''),
     };
   }
 }
