@@ -1,13 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { GoogleTokenRepository } from '@/backend/repositories/google-token-repository';
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { GoogleTokenRepository } from "@/backend/repositories/google-token-repository";
 
 const googleTokenRepository = new GoogleTokenRepository();
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
-  const code = requestUrl.searchParams.get('code');
-  const next = requestUrl.searchParams.get('next') ?? '/dashboard';
+  const code = requestUrl.searchParams.get("code");
+  const next = requestUrl.searchParams.get("next") ?? "/dashboard";
 
   if (code) {
     const supabase = await createClient();
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
             expires_at: expiresAt,
           });
         } catch (tokenError) {
-          console.error('Error storing Google tokens:', tokenError);
+          console.error("Error storing Google tokens:", tokenError);
           // Continue even if token storage fails
         }
       }
@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(new URL('/login?error=auth_failed', request.url));
+  return NextResponse.redirect(
+    new URL("/login?error=auth_failed", request.url),
+  );
 }
-

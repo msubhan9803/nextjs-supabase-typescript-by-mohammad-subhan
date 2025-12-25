@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import { createClient } from '@/lib/supabase/client';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,16 +21,16 @@ export default function LoginPage() {
     try {
       setLoading(true);
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
+        provider: "google",
         options: {
           redirectTo: `${window.location.origin}/api/auth/callback`,
           queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-            scope: [
-              'https://www.googleapis.com/auth/calendar.readonly',
-              'https://www.googleapis.com/auth/gmail.send',
-            ].join(' '),
+            access_type: "offline",
+            prompt: "consent",
+            scopes: [
+              "https://www.googleapis.com/auth/gmail.send",
+              "https://www.googleapis.com/auth/calendar",
+            ].join(" "),
           },
         },
       });
@@ -39,8 +39,8 @@ export default function LoginPage() {
         throw error;
       }
     } catch (error) {
-      console.error('Error signing in:', error);
-      alert('Failed to sign in. Please try again.');
+      console.error("Error signing in:", error);
+      alert("Failed to sign in. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -71,14 +71,10 @@ export default function LoginPage() {
               size="lg"
             >
               {loading ? (
-                'Signing in...'
+                "Signing in..."
               ) : (
                 <>
-                  <svg
-                    className="mr-2 h-5 w-5"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
+                  <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
                     <path
                       d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
                       fill="#4285F4"
