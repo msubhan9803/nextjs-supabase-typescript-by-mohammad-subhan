@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { useEmailTemplates, useDeleteEmailTemplate } from '@/hooks/use-email-templates';
 import { EmailTemplateForm } from '@/components/email-templates/email-template-form';
-import type { EmailTemplate } from '@/backend/entities/email-template';
+import type { EmailTemplateRow } from '@/types/schema';
 
 export default function TemplatesPage() {
   const { data: templates, isLoading } = useEmailTemplates();
   const deleteTemplate = useDeleteEmailTemplate();
-  const [editingTemplate, setEditingTemplate] = useState<EmailTemplate | null>(null);
+  const [editingTemplate, setEditingTemplate] = useState<EmailTemplateRow | null>(null);
   const [showForm, setShowForm] = useState(false);
 
   const handleDelete = async (id: string) => {

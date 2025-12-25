@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useCreateEmailTemplate, useUpdateEmailTemplate } from '@/hooks/use-email-templates';
-import type { EmailTemplate } from '@/backend/entities/email-template';
+import type { EmailTemplateRow } from '@/types/schema';
 import type { CreateEmailTemplateInput } from '@/lib/validations/email-template';
 
 interface EmailTemplateFormProps {
-  template?: EmailTemplate | null;
+  template?: EmailTemplateRow | null;
   onClose: () => void;
 }
 

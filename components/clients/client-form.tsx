@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useCreateClient, useUpdateClient } from '@/hooks/use-clients';
-import type { Client } from '@/backend/entities/client';
+import type { ClientRow } from '@/types/schema';
 import type { CreateClientInput } from '@/lib/validations/client';
 
 interface ClientFormProps {
-  client?: Client | null;
+  client?: ClientRow | null;
   onClose: () => void;
 }
 

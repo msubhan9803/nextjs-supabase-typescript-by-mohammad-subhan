@@ -1,7 +1,7 @@
 import { google, type Auth } from 'googleapis';
 import { GoogleTokenRepository } from '@/backend/repositories/google-token-repository';
 import { ClientRepository } from '@/backend/repositories/client-repository';
-import type { Client } from '@/backend/entities/client';
+import type { ClientRow } from '@/types/schema';
 
 export interface EmailSendResult {
   success: boolean;
@@ -43,7 +43,7 @@ export class EmailService {
     });
 
     // Check if token is expired and refresh if needed
-    if (new Date() >= token.expires_at) {
+    if (token.expires_at && new Date() >= new Date(token.expires_at)) {
       await this.refreshToken(userId, oauth2Client);
     }
 
@@ -112,7 +112,7 @@ export class EmailService {
       .replace(/=+$/, '');
   }
 
-  private replaceTemplateVariables(template: string, client: Client): string {
+  private replaceTemplateVariables(template: string, client: ClientRow): string {
     return template
       .replace(/\{\{client_name\}\}/g, client.name)
       .replace(/\{\{email\}\}/g, client.email)

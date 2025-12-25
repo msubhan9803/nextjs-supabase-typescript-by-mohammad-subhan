@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useClients } from '@/hooks/use-clients';
 import { useEmailTemplates } from '@/hooks/use-email-templates';
 import { useSendEmails } from '@/hooks/use-email';
-import type { Client } from '@/backend/entities/client';
 
 export default function EmailsPage() {
   const { data: clients } = useClients();

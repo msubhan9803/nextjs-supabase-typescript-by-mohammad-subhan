@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { EmailTemplate } from '@/backend/entities/email-template';
+import type { EmailTemplateRow } from '@/types/schema';
 import type {
   CreateEmailTemplateInput,
   UpdateEmailTemplateInput,
@@ -7,7 +7,7 @@ import type {
 
 const API_BASE = '/api/email-templates';
 
-async function fetchEmailTemplates(): Promise<EmailTemplate[]> {
+async function fetchEmailTemplates(): Promise<EmailTemplateRow[]> {
   const response = await fetch(API_BASE);
   if (!response.ok) {
     throw new Error('Failed to fetch email templates');
@@ -17,7 +17,7 @@ async function fetchEmailTemplates(): Promise<EmailTemplate[]> {
 
 async function createEmailTemplate(
   input: CreateEmailTemplateInput
-): Promise<EmailTemplate> {
+): Promise<EmailTemplateRow> {
   const response = await fetch(API_BASE, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -33,7 +33,7 @@ async function createEmailTemplate(
 async function updateEmailTemplate(
   id: string,
   input: UpdateEmailTemplateInput
-): Promise<EmailTemplate> {
+): Promise<EmailTemplateRow> {
   const response = await fetch(`${API_BASE}/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },

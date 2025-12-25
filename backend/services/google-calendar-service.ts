@@ -1,6 +1,6 @@
 import { google, type Auth } from 'googleapis';
 import { GoogleTokenRepository } from '@/backend/repositories/google-token-repository';
-import type { CalendarEvent } from '@/backend/entities/calendar-event';
+import type { CalendarEvent } from '@/types/schema';
 
 export class GoogleCalendarService {
   constructor(private readonly googleTokenRepository: GoogleTokenRepository) {}
@@ -22,7 +22,7 @@ export class GoogleCalendarService {
     });
 
     // Check if token is expired and refresh if needed
-    if (new Date() >= token.expires_at) {
+    if (token.expires_at && new Date() >= new Date(token.expires_at)) {
       await this.refreshToken(userId, oauth2Client);
     }
 

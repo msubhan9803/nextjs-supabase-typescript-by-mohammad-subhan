@@ -1,14 +1,13 @@
 import { createClient } from '@/lib/supabase/server';
 import type {
-  EmailTemplate,
   CreateEmailTemplateInput,
   UpdateEmailTemplateInput,
-} from '@/backend/entities/email-template';
+} from '@/lib/validations/email-template';
 import { TABLES } from '@/lib/constants';
-import { EmailTemplateRow } from '@/types/schema';
+import type { EmailTemplateRow } from '@/types/schema';
 
 export class EmailTemplateRepository {
-  async findAllByUserId(userId: string): Promise<EmailTemplate[]> {
+  async findAllByUserId(userId: string): Promise<EmailTemplateRow[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from(TABLES.EMAIL_TEMPLATES)
@@ -20,10 +19,10 @@ export class EmailTemplateRepository {
       throw new Error(`Failed to fetch email templates: ${error.message}`);
     }
 
-    return (data ?? []).map(this.mapRowToEntity);
+    return data ?? [];
   }
 
-  async findById(id: string, userId: string): Promise<EmailTemplate | null> {
+  async findById(id: string, userId: string): Promise<EmailTemplateRow | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from(TABLES.EMAIL_TEMPLATES)
@@ -39,13 +38,13 @@ export class EmailTemplateRepository {
       throw new Error(`Failed to fetch email template: ${error.message}`);
     }
 
-    return data ? this.mapRowToEntity(data) : null;
+    return data;
   }
 
   async create(
     input: CreateEmailTemplateInput,
     userId: string
-  ): Promise<EmailTemplate> {
+  ): Promise<EmailTemplateRow> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from(TABLES.EMAIL_TEMPLATES)
@@ -62,14 +61,14 @@ export class EmailTemplateRepository {
       throw new Error(`Failed to create email template: ${error.message}`);
     }
 
-    return this.mapRowToEntity(data);
+    return data;
   }
 
   async update(
     id: string,
     input: UpdateEmailTemplateInput,
     userId: string
-  ): Promise<EmailTemplate> {
+  ): Promise<EmailTemplateRow> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from(TABLES.EMAIL_TEMPLATES)
@@ -90,7 +89,7 @@ export class EmailTemplateRepository {
       throw new Error('Email template not found');
     }
 
-    return this.mapRowToEntity(data);
+    return data;
   }
 
   async delete(id: string, userId: string): Promise<void> {
@@ -104,18 +103,6 @@ export class EmailTemplateRepository {
     if (error) {
       throw new Error(`Failed to delete email template: ${error.message}`);
     }
-  }
-
-  private mapRowToEntity(row: EmailTemplateRow): EmailTemplate {
-    return {
-      id: row.id,
-      user_id: row.user_id,
-      name: row.name,
-      subject: row.subject,
-      body: row.body,
-      created_at: new Date(row.created_at ?? ''),
-      updated_at: new Date(row.updated_at ?? ''),
-    };
   }
 }
 

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { CalendarEvent } from '@/backend/entities/calendar-event';
+import type { CalendarEvent } from '@/types/schema';
 
 interface GetCalendarEventsParams {
   period?: 'today' | 'week' | 'month' | 'custom';

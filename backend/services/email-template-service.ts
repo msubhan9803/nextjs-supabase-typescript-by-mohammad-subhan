@@ -1,20 +1,20 @@
 import { EmailTemplateRepository } from '@/backend/repositories/email-template-repository';
 import type {
-  EmailTemplate,
   CreateEmailTemplateInput,
   UpdateEmailTemplateInput,
-} from '@/backend/entities/email-template';
+} from '@/lib/validations/email-template';
+import type { EmailTemplateRow } from '@/types/schema';
 
 export class EmailTemplateService {
   constructor(
     private readonly emailTemplateRepository: EmailTemplateRepository
   ) {}
 
-  async getAllTemplates(userId: string): Promise<EmailTemplate[]> {
+  async getAllTemplates(userId: string): Promise<EmailTemplateRow[]> {
     return this.emailTemplateRepository.findAllByUserId(userId);
   }
 
-  async getTemplateById(id: string, userId: string): Promise<EmailTemplate> {
+  async getTemplateById(id: string, userId: string): Promise<EmailTemplateRow> {
     const template = await this.emailTemplateRepository.findById(id, userId);
     if (!template) {
       throw new Error('Email template not found');
@@ -25,7 +25,7 @@ export class EmailTemplateService {
   async createTemplate(
     input: CreateEmailTemplateInput,
     userId: string
-  ): Promise<EmailTemplate> {
+  ): Promise<EmailTemplateRow> {
     return this.emailTemplateRepository.create(input, userId);
   }
 
@@ -33,7 +33,7 @@ export class EmailTemplateService {
     id: string,
     input: UpdateEmailTemplateInput,
     userId: string
-  ): Promise<EmailTemplate> {
+  ): Promise<EmailTemplateRow> {
     // Verify ownership
     await this.getTemplateById(id, userId);
     return this.emailTemplateRepository.update(id, input, userId);

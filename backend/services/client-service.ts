@@ -1,18 +1,15 @@
 import { ClientRepository } from '@/backend/repositories/client-repository';
-import type {
-  Client,
-  CreateClientInput,
-  UpdateClientInput,
-} from '@/backend/entities/client';
+import type { CreateClientInput, UpdateClientInput } from '@/lib/validations/client';
+import type { ClientRow } from '@/types/schema';
 
 export class ClientService {
   constructor(private readonly clientRepository: ClientRepository) {}
 
-  async getAllClients(userId: string): Promise<Client[]> {
+  async getAllClients(userId: string): Promise<ClientRow[]> {
     return this.clientRepository.findAllByUserId(userId);
   }
 
-  async getClientById(id: string, userId: string): Promise<Client> {
+  async getClientById(id: string, userId: string): Promise<ClientRow> {
     const client = await this.clientRepository.findById(id, userId);
     if (!client) {
       throw new Error('Client not found');
@@ -20,7 +17,7 @@ export class ClientService {
     return client;
   }
 
-  async createClient(input: CreateClientInput, userId: string): Promise<Client> {
+  async createClient(input: CreateClientInput, userId: string): Promise<ClientRow> {
     return this.clientRepository.create(input, userId);
   }
 
@@ -28,7 +25,7 @@ export class ClientService {
     id: string,
     input: UpdateClientInput,
     userId: string
-  ): Promise<Client> {
+  ): Promise<ClientRow> {
     // Verify ownership
     await this.getClientById(id, userId);
     return this.clientRepository.update(id, input, userId);
@@ -40,7 +37,7 @@ export class ClientService {
     return this.clientRepository.delete(id, userId);
   }
 
-  async getClientsByIds(ids: string[], userId: string): Promise<Client[]> {
+  async getClientsByIds(ids: string[], userId: string): Promise<ClientRow[]> {
     const clients = await this.clientRepository.findByIds(ids, userId);
     // Verify all clients belong to the user
     if (clients.length !== ids.length) {

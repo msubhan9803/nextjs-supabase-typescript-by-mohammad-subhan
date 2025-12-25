@@ -3,12 +3,12 @@
 import { useClients, useDeleteClient } from '@/hooks/use-clients';
 import { useState } from 'react';
 import { ClientForm } from '@/components/clients/client-form';
-import type { Client } from '@/backend/entities/client';
+import type { ClientRow } from '@/types/schema';
 
 export default function ClientsPage() {
   const { data: clients, isLoading } = useClients();
   const deleteClient = useDeleteClient();
-  const [editingClient, setEditingClient] = useState<Client | null>(null);
+  const [editingClient, setEditingClient] = useState<ClientRow | null>(null);
   const [showForm, setShowForm] = useState(false);
 
   const handleDelete = async (id: string) => {

@@ -1,10 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { Client } from '@/backend/entities/client';
+import type { ClientRow } from '@/types/schema';
 import type { CreateClientInput, UpdateClientInput } from '@/lib/validations/client';
 
 const API_BASE = '/api/clients';
 
-async function fetchClients(): Promise<Client[]> {
+async function fetchClients(): Promise<ClientRow[]> {
   const response = await fetch(API_BASE);
   if (!response.ok) {
     throw new Error('Failed to fetch clients');
@@ -12,7 +12,7 @@ async function fetchClients(): Promise<Client[]> {
   return response.json();
 }
 
-async function createClient(input: CreateClientInput): Promise<Client> {
+async function createClient(input: CreateClientInput): Promise<ClientRow> {
   const response = await fetch(API_BASE, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -28,7 +28,7 @@ async function createClient(input: CreateClientInput): Promise<Client> {
 async function updateClient(
   id: string,
   input: UpdateClientInput
-): Promise<Client> {
+): Promise<ClientRow> {
   const response = await fetch(`${API_BASE}/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },

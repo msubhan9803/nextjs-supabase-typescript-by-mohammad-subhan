@@ -1,10 +1,10 @@
 import { createClient } from '@/lib/supabase/server';
-import type { Client, CreateClientInput, UpdateClientInput } from '@/backend/entities/client';
+import type { CreateClientInput, UpdateClientInput } from '@/lib/validations/client';
 import { TABLES } from '@/lib/constants';
-import { ClientRow } from '@/types/schema';
+import type { ClientRow } from '@/types/schema';
 
 export class ClientRepository {
-  async findAllByUserId(userId: string): Promise<Client[]> {
+  async findAllByUserId(userId: string): Promise<ClientRow[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from(TABLES.CLIENTS)
@@ -16,10 +16,10 @@ export class ClientRepository {
       throw new Error(`Failed to fetch clients: ${error.message}`);
     }
 
-    return (data ?? []).map(this.mapRowToEntity);
+    return data ?? [];
   }
 
-  async findById(id: string, userId: string): Promise<Client | null> {
+  async findById(id: string, userId: string): Promise<ClientRow | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from(TABLES.CLIENTS)
@@ -35,10 +35,10 @@ export class ClientRepository {
       throw new Error(`Failed to fetch client: ${error.message}`);
     }
 
-    return data ? this.mapRowToEntity(data) : null;
+    return data;
   }
 
-  async create(input: CreateClientInput, userId: string): Promise<Client> {
+  async create(input: CreateClientInput, userId: string): Promise<ClientRow> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from(TABLES.CLIENTS)
@@ -56,10 +56,10 @@ export class ClientRepository {
       throw new Error(`Failed to create client: ${error.message}`);
     }
 
-    return this.mapRowToEntity(data);
+    return data;
   }
 
-  async update(id: string, input: UpdateClientInput, userId: string): Promise<Client> {
+  async update(id: string, input: UpdateClientInput, userId: string): Promise<ClientRow> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from(TABLES.CLIENTS)
@@ -80,7 +80,7 @@ export class ClientRepository {
       throw new Error('Client not found');
     }
 
-    return this.mapRowToEntity(data);
+    return data;
   }
 
   async delete(id: string, userId: string): Promise<void> {
@@ -96,7 +96,7 @@ export class ClientRepository {
     }
   }
 
-  async findByIds(ids: string[], userId: string): Promise<Client[]> {
+  async findByIds(ids: string[], userId: string): Promise<ClientRow[]> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from(TABLES.CLIENTS)
@@ -108,20 +108,7 @@ export class ClientRepository {
       throw new Error(`Failed to fetch clients: ${error.message}`);
     }
 
-    return (data ?? []).map(this.mapRowToEntity);
-  }
-
-  private mapRowToEntity(row: ClientRow): Client {
-    return {
-      id: row.id,
-      user_id: row.user_id,
-      name: row.name,
-      email: row.email,
-      phone: row.phone,
-      notes: row.notes,
-      created_at: new Date(row.created_at ?? ''),
-      updated_at: new Date(row.updated_at ?? ''),
-    };
+    return data ?? [];
   }
 }
 

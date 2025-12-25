@@ -1,14 +1,22 @@
 import { createClient } from '@/lib/supabase/server';
-import type {
-  GoogleToken,
-  CreateGoogleTokenInput,
-  UpdateGoogleTokenInput,
-} from '@/backend/entities/google-token';
 import { TABLES } from '@/lib/constants';
-import { GoogleTokenRow } from '@/types/schema';
+import type { GoogleTokenRow, GoogleTokenInsert, GoogleTokenUpdate } from '@/types/schema';
+
+export interface CreateGoogleTokenInput {
+  user_id: string;
+  access_token: string;
+  refresh_token: string;
+  expires_at: Date;
+}
+
+export interface UpdateGoogleTokenInput {
+  access_token?: string;
+  refresh_token?: string;
+  expires_at?: Date;
+}
 
 export class GoogleTokenRepository {
-  async findByUserId(userId: string): Promise<GoogleToken | null> {
+  async findByUserId(userId: string): Promise<GoogleTokenRow | null> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from(TABLES.GOOGLE_TOKENS)
@@ -23,10 +31,10 @@ export class GoogleTokenRepository {
       throw new Error(`Failed to fetch Google token: ${error.message}`);
     }
 
-    return data ? this.mapRowToEntity(data) : null;
+    return data;
   }
 
-  async create(input: CreateGoogleTokenInput): Promise<GoogleToken> {
+  async create(input: CreateGoogleTokenInput): Promise<GoogleTokenRow> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from(TABLES.GOOGLE_TOKENS)
@@ -35,7 +43,7 @@ export class GoogleTokenRepository {
         access_token: input.access_token,
         refresh_token: input.refresh_token,
         expires_at: input.expires_at.toISOString(),
-      } as never)
+      } as GoogleTokenInsert)
       .select()
       .single();
 
@@ -43,10 +51,10 @@ export class GoogleTokenRepository {
       throw new Error(`Failed to create Google token: ${error.message}`);
     }
 
-    return this.mapRowToEntity(data);
+    return data;
   }
 
-  async upsert(input: CreateGoogleTokenInput): Promise<GoogleToken> {
+  async upsert(input: CreateGoogleTokenInput): Promise<GoogleTokenRow> {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from(TABLES.GOOGLE_TOKENS)
@@ -57,7 +65,7 @@ export class GoogleTokenRepository {
           refresh_token: input.refresh_token,
           expires_at: input.expires_at.toISOString(),
           updated_at: new Date().toISOString(),
-        } as never,
+        } as GoogleTokenInsert,
         {
           onConflict: 'user_id',
         }
@@ -69,21 +77,23 @@ export class GoogleTokenRepository {
       throw new Error(`Failed to upsert Google token: ${error.message}`);
     }
 
-    return this.mapRowToEntity(data);
+    return data;
   }
 
   async update(
     userId: string,
     input: UpdateGoogleTokenInput
-  ): Promise<GoogleToken> {
+  ): Promise<GoogleTokenRow> {
     const supabase = await createClient();
+    const updateData: GoogleTokenUpdate = {
+      ...input,
+      expires_at: input.expires_at?.toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    
     const { data, error } = await supabase
       .from(TABLES.GOOGLE_TOKENS)
-      .update({
-        ...input,
-        expires_at: input.expires_at?.toISOString(),
-        updated_at: new Date().toISOString(),
-      } as never)
+      .update(updateData)
       .eq('user_id', userId)
       .select()
       .single();
@@ -96,19 +106,7 @@ export class GoogleTokenRepository {
       throw new Error('Google token not found');
     }
 
-    return this.mapRowToEntity(data);
-  }
-
-  private mapRowToEntity(row: GoogleTokenRow): GoogleToken {
-    return {
-      id: row.id,
-      user_id: row.user_id,
-      access_token: row.access_token,
-      refresh_token: row.refresh_token,
-      expires_at: new Date(row.expires_at ?? ''),
-      created_at: new Date(row.created_at ?? ''),
-      updated_at: new Date(row.updated_at ?? ''),
-    };
+    return data;
   }
 }
 
