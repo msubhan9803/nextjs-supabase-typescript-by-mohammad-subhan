@@ -53,7 +53,7 @@ export class EmailTemplateRepository {
         name: input.name,
         subject: input.subject,
         body: input.body,
-      })
+      } as never)
       .select()
       .single();
 
@@ -75,7 +75,7 @@ export class EmailTemplateRepository {
       .update({
         ...input,
         updated_at: new Date().toISOString(),
-      })
+      } as never)
       .eq('id', id)
       .eq('user_id', userId)
       .select()

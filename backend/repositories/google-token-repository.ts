@@ -34,7 +34,7 @@ export class GoogleTokenRepository {
         access_token: input.access_token,
         refresh_token: input.refresh_token,
         expires_at: input.expires_at.toISOString(),
-      })
+      } as never)
       .select()
       .single();
 
@@ -56,7 +56,7 @@ export class GoogleTokenRepository {
           refresh_token: input.refresh_token,
           expires_at: input.expires_at.toISOString(),
           updated_at: new Date().toISOString(),
-        },
+        } as never,
         {
           onConflict: 'user_id',
         }
@@ -82,7 +82,7 @@ export class GoogleTokenRepository {
         ...input,
         expires_at: input.expires_at?.toISOString(),
         updated_at: new Date().toISOString(),
-      })
+      } as never)
       .eq('user_id', userId)
       .select()
       .single();

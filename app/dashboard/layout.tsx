@@ -1,4 +1,12 @@
-import { Navbar } from '@/components/layout/navbar';
+'use client';
+
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/app-sidebar';
+import { Separator } from '@/components/ui/separator';
 
 export default function DashboardLayout({
   children,
@@ -6,12 +14,18 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {children}
-      </main>
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger className="-ml-1" />
+          <Separator orientation="vertical" className="mr-2 h-4" />
+        </header>
+        <div className="flex flex-1 flex-col gap-4 p-4 md:p-6">
+          {children}
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
 

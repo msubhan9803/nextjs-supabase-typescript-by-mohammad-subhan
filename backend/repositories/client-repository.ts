@@ -47,7 +47,7 @@ export class ClientRepository {
         email: input.email,
         phone: input.phone ?? null,
         notes: input.notes ?? null,
-      })
+      } as never)
       .select()
       .single();
 
@@ -65,7 +65,7 @@ export class ClientRepository {
       .update({
         ...input,
         updated_at: new Date().toISOString(),
-      })
+      } as never)
       .eq('id', id)
       .eq('user_id', userId)
       .select()
